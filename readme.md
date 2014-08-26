@@ -4,10 +4,10 @@ Wrap compiled Haxe JS output for use as a self-contained module compatible with 
 
 Fields exposed in Haxe with the `@:expose` metadata will be available in the module. 
 
-Creates modules that will work with AMD (requirejs) or CommonJS, and will expose any exports to globally if those options are not available.
+Creates modules that will work with AMD (requirejs) or CommonJS, and will expose any exports globally if those options are not available.
 
 See `run-examples.bat` and the `example/` folder for basic usage examples.
 
 If you need it, `nekotools boot UMDWrap.n` will create an executable version of the tool.
 
-Based on the templates at https://github.com/umdjs/umd
+Based on templates from [umdjs](https://github.com/umdjs/umd)
