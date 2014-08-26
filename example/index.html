@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>HaxeJS - UMDWrap examples</title>
+	<meta name="description" content="" />
+</head>
+<body>
+	
+	<!-- Load immediately, as global modules -->
+	<script src="module-no-exports.js"></script> 
+	<script src="module-with-exports.js"></script>
+	<script>
+		console.info('Checking global exports...');
+		//
+		console.log(tests); 
+		console.log(moretests);
+		//
+		//delete tests;
+		//delete moretests;
+	</script>
+	
+	
+	<!-- Load as AMD modules, using requirejs  -->
+	<script src="require.js"></script>
+	<script>
+		console.info('Load RequireJS modules');
+		
+		console.info('load: module-no-exports');
+		require(["module-no-exports"], function() {
+			console.log('required module-no-exports');
+		});
+		
+		console.info('load: module_test-with-exports1');
+		require(["module-with-exports"], function(module) {
+			console.log('required module-with-exports1');
+			console.log(module);
+			console.log(module.tests);
+			console.log(module.moretests);
+			module.moretests.anotherTest();
+		});
+		
+		//
+		console.info('load: all');
+		require(["module-with-exports", "module-no-exports"], function(a,b) {
+			console.log('required all');
+			console.log(a,b);
+		});
+		
+	</script>
+	
+</body>
+</html>
