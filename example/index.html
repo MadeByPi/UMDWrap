@@ -4,8 +4,7 @@
 	<meta charset="utf-8"/>
 	<title>HaxeJS - UMDWrap examples</title>
 	<meta name="description" content="" />
-</head>
-<body>
+	
 	
 	<!-- Load immediately, as global modules -->
 	<script src="module-no-exports.js"></script> 
@@ -47,7 +46,28 @@
 			console.log(a,b);
 		});
 		
+		require.config({
+			paths:{
+				'jquery':'jquery',
+				'RectanglePacker':'rectanglepacking-debug'
+			},
+			shim: {
+				"RectanglePacker": {
+					deps: ['jquery']
+				}
+			},
+		});
+		
+		require(["RectanglePacker"], function(module) {
+			console.log('required RectanglePacker');
+			console.log(module);
+		});
+		
+		
 	</script>
+	
+</head>
+<body>
 	
 </body>
 </html>
