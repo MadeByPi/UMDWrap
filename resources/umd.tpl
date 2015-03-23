@@ -1,12 +1,21 @@
-(function(root, factory) {
+(function(root, factory, console) {
 	if (typeof define === "function" && define.amd) {
 		// AMD. Register as an anonymous module.
-		define([], ::if haveExports::function() { var exports={}; factory(exports); return exports; }::else::factory::end::);
-	::if haveExports:: } else if (typeof exports === 'object') {
-		// CommonJS
-        factory(exports);
-	::end:: } else {
-		// ::if haveExports::Browser globals::else::Call the factory::end::
-		factory(::if haveExports::root::end::);
+		define([], function() { 
+		::if haveExports::
+			var exports = {};
+			factory(console, exports); 
+			return exports; 
+		::else::
+			factory(console);
+		::end::
+		});
+::if haveExports::
+	} else if (typeof exports === 'object') {
+        factory(console, exports);
+::end::
+	} else {
+		factory(console::if haveExports::, root::end::);
 	}
-}(this, ::factoryCode::));
+})
+(this, ::factoryCode::, typeof console != "undefined" ? console : {log:function(){}});

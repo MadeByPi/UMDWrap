@@ -1,12 +1,17 @@
-(function(root, factory) {
+(function(root, factory, console) {
 	if (typeof define === "function" && define.amd) {
 		// AMD. Register as an anonymous module.
-		define([], factory);
-	 } else {
-		// Call the factory
-		factory();
+		define([], function() { 
+		
+			factory(console);
+		
+		});
+
+	} else {
+		factory(console);
 	}
-}(this, function () { "use strict";
+})
+(this, function (console) { "use strict";
 var Main = function() {
 	console.log("I'm new!");
 };
@@ -23,4 +28,4 @@ Main.prototype = {
 	}
 };
 Main.main();
-}));
+}, typeof console != "undefined" ? console : {log:function(){}});

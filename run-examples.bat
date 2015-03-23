@@ -2,8 +2,8 @@
 
 : Should succeed
 :
-neko bin/UMDWrap.n -in example/haxejs-no-exports.js -out example/module-no-exports.js
-neko bin/UMDWrap.n -in example/haxejs-with-exports.js -out example/module-with-exports.js
+neko bin/UMDWrap.n -in example/project/bin/haxejs-no-exports.js -out example/module-no-exports.js
+neko bin/UMDWrap.n -in example/project/bin/haxejs-exports.js -out example/module-with-exports.js
 
 
 : Will fail

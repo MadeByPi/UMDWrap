@@ -5,18 +5,17 @@
 	<title>HaxeJS - UMDWrap examples</title>
 	<meta name="description" content="" />
 	
-	
 	<!-- Load immediately, as global modules -->
 	<script src="module-no-exports.js"></script> 
 	<script src="module-with-exports.js"></script>
 	<script>
 		console.info('Checking global exports...');
 		//
+		console.log(typeof tests); 
 		console.log(tests); 
+		console.log(typeof moretests);
 		console.log(moretests);
 		//
-		//delete tests;
-		//delete moretests;
 	</script>
 	
 	

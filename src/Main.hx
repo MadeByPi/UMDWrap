@@ -29,12 +29,9 @@ class Main {
 	// NOTE: Apply this process post-build, before any minification or obfuscation
 	// NOTE: These begin/end pairs depend on the format of the Haxe JS compiler not changing.... so can break easily.
 	
-	static var Begin_NoExports = '(function ()';
-	static var End_NoExports = ')();';
-	
-	static var Begin_WithExports = '(function ($$hx_exports)';
-	static var End_WithExports = ')(typeof window != "undefined" ? window : exports);';
-	
+	static var JSBegin 			= '(function (';
+	static var JSEnd 			= '})(typeof console != "undefined" ? console : {log:function(){}});';
+	static var JSEndWithExports = '})(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : exports);';
 	
 	static function main() {
 		Sys.println('UMDWrap');
@@ -60,17 +57,19 @@ class Main {
 		
 		// load js
 		try {
-			inJS = File.getContent(inName);
+			inJS = File.getContent(inName).trim();
 		} catch (err:Dynamic) {
 			Sys.println('ERROR: Unable to read js file "$inName"');
 			instructions();
 		}
 		
 		// wrap
-		if (StringTools.startsWith(inJS, Begin_NoExports)) {
-			outJS = wrapModule(inJS, Begin_NoExports, End_NoExports);
-		} else if (StringTools.startsWith(inJS, Begin_WithExports)) {
-			outJS = wrapModule(inJS, Begin_WithExports, End_WithExports);
+		if (inJS.startsWith(JSBegin)) { // haxe js output is (always?) wrapped in an anon closure
+			if (inJS.endsWith(JSEnd)) { // have some exports
+				outJS = wrapModule(inJS, false);
+			} else if(inJS.endsWith(JSEndWithExports)) {
+				outJS = wrapModule(inJS, true);
+			}
 		}
 		
 		// save wrapped output
@@ -103,21 +102,15 @@ class Main {
 	}
 	
 	
-	static function wrapModule(input:String, start:String, end:String) {
+	static function wrapModule(input:String, hasExports:Bool) {
 		
 		var tpl = new Template(Resource.getString('template'));
 		
-		var haveExports = start == Begin_WithExports;
-		
-		// 
-		var trimmed = input.substr(1); // trim the initial '('
-		
-		var i 	= trimmed.lastIndexOf(end);
-		trimmed = trimmed.substr(0, i);
+		var end = input.lastIndexOf(hasExports ? JSEndWithExports : JSEnd);
 		
 		return tpl.execute({
-			haveExports:haveExports,
-			factoryCode:trimmed,
+			haveExports:hasExports,
+			factoryCode:input.substr(1, end),
 		});
 	}
 	
