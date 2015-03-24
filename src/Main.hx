@@ -29,7 +29,7 @@ class Main {
 	// NOTE: Apply this process post-build, before any minification or obfuscation
 	// NOTE: These begin/end pairs depend on the format of the Haxe JS compiler not changing.... so can break easily.
 	
-	static var JSBegin 			= '(function (';
+	static var JSBegin 			= '(function (console';
 	static var JSEnd 			= '})(typeof console != "undefined" ? console : {log:function(){}});';
 	static var JSEndWithExports = '})(typeof console != "undefined" ? console : {log:function(){}}, typeof window != "undefined" ? window : exports);';
 	
@@ -63,10 +63,12 @@ class Main {
 			instructions();
 		}
 		
+		inJS = checkJSOutput(inJS);
+		
 		// wrap
 		if (inJS.startsWith(JSBegin)) { // haxe js output is (always?) wrapped in an anon closure
 			if (inJS.endsWith(JSEnd)) { // have some exports
-				outJS = wrapModule(inJS, false);
+				outJS = wrapModule(inJS);
 			} else if(inJS.endsWith(JSEndWithExports)) {
 				outJS = wrapModule(inJS, true);
 			}
@@ -102,10 +104,29 @@ class Main {
 	}
 	
 	
-	static function wrapModule(input:String, hasExports:Bool) {
+	// check and update 3.x js output to 3.2 style - with console wrapper
+	static function checkJSOutput(js:String) {
+		
+		var begin31 = '(function (';
+		var end31NoExports = '})();';
+		var end31Exports = '})(typeof window != "undefined" ? window : exports);';
+		var n;
+		
+		if (js.endsWith(end31NoExports)) { 
+			n = js.length - end31NoExports.length;
+			js = JSBegin + js.substring(begin31.length, n) + JSEnd;
+		} else if (js.endsWith(end31Exports)) {
+			n = js.length - end31Exports.length;
+			js = JSBegin + ', ' + js.substring(begin31.length, n) + JSEndWithExports;	
+		}
+		
+		return js;
+	}
+	
+	
+	static function wrapModule(input:String, hasExports:Bool=false) {
 		
 		var tpl = new Template(Resource.getString('template'));
-		
 		var end = input.lastIndexOf(hasExports ? JSEndWithExports : JSEnd);
 		
 		return tpl.execute({
